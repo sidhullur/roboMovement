@@ -6,7 +6,7 @@
 
 void Robot::RobotInit() {
   joystick = new frc::Joystick(0);
-  motor = new rev::CANSparkMax(0, rev::CANSparkMaxLowLevel::MotorType::kBrushless)
+  motor = new rev::CANSparkMax(1, rev::CANSparkMaxLowLevel::MotorType::kBrushless);
 }
 void Robot::RobotPeriodic() {}
 
@@ -15,7 +15,16 @@ void Robot::AutonomousPeriodic() {}
 
 void Robot::TeleopInit() {}
 void Robot::TeleopPeriodic() {
-  motor->Set(joystick->GetY());
+  double dz = 0.1;
+  double RawX = joystick->GetRawAxis(1);
+  double x = fabs(RawX);
+
+  if(x > dz) {
+    double y = (1/(1-dz))*(x) - (dz/(1-dz));
+    if (RawX < 0) y = -y;
+    motor->Set(y);
+  } else motor->Set(0);
+
 }
 
 void Robot::DisabledInit() {}
